@@ -1,0 +1,31 @@
+All photos are bundled locally so the service cards do not depend on third-party
+image hosts at runtime.
+
+Wikimedia Commons photos:
+- mehendi-artist.jpg: "Birdal mehndi design" by Subha899,
+  https://commons.wikimedia.org/wiki/File:Birdal_mehndi_design.png,
+  licensed under CC BY-SA 4.0:
+  https://creativecommons.org/licenses/by-sa/4.0/
+- tailoring-service.jpg: "Hand sewing machine - Macedonian tailoring craft"
+  by Orce Wiki,
+  https://commons.wikimedia.org/wiki/File:Hand_sewing_machine_-_Macedonian_tailoring_craft.jpg,
+  licensed under CC BY-SA 4.0:
+  https://creativecommons.org/licenses/by-sa/4.0/
+- rangoli-artist.jpg: "Rangoli - Floor art (24199037218)" by dksesh,
+  https://commons.wikimedia.org/wiki/File:Rangoli_-_Floor_art_(24199037218).jpg,
+  licensed under CC BY-SA 2.0:
+  https://creativecommons.org/licenses/by-sa/2.0/
+
+The other 11 photos are from Unsplash and are used under the Unsplash License:
+https://unsplash.com/license
+- home-baker.jpg: https://images.unsplash.com/photo-1578985545062-69928b1d9587
+- photographer.jpg: https://images.unsplash.com/photo-1452587925148-ce544e77e70d
+- makeup-artist.jpg: https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9
+- tuition-teacher.jpg: https://images.unsplash.com/photo-1503676260728-1c00da094a0b
+- pet-sitter.jpg: https://images.unsplash.com/photo-1548199973-03cce0bbc87b
+- car-washing.jpg: https://images.unsplash.com/photo-1607860108855-64acf2078ed9
+- home-cook.jpg: https://images.unsplash.com/photo-1556911220-e15b29be8c8f
+- event-decorator.jpg: https://images.unsplash.com/photo-1519167758481-83f550bb49b3
+- beauty-service.jpg: https://images.unsplash.com/photo-1516975080664-ed2fc6a32937
+- mobile-repair.jpg: https://images.unsplash.com/photo-1511707171634-5f897ff02aa9
+- yoga-instructor.jpg: https://images.unsplash.com/photo-1544367567-0f2fcb009e0b

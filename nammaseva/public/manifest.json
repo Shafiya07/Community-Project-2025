@@ -1,0 +1,15 @@
+{
+  "short_name": "Namma Seva",
+  "name": "Namma Seva - Local Workers in Tumakuru",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#246B45",
+  "background_color": "#F8FAF7"
+}
