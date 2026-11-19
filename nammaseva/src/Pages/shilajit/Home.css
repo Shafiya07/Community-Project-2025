@@ -1566,7 +1566,8 @@
   -webkit-text-fill-color: initial;
 }
 
-.cta-register {
+.cta-register,
+.landing-home a.cta-register {
   min-height: 44px;
   padding: 0 20px;
   display: inline-flex;
