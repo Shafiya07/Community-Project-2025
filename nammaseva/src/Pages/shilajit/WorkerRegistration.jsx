@@ -134,6 +134,7 @@ export default function WorkerRegistration() {
           <p>{t("registerCopy")}</p>
         </section>
         <form className="registration-form" onSubmit={submit} noValidate>
+          <p className="account-hint">Worker registration is linked to your account. <Link to="/my-profile">Sign in or create your worker account</Link> first.</p>
           <div className="form-grid">
             <label className="field-label">
               {t("fullName")} *
@@ -213,7 +214,7 @@ export default function WorkerRegistration() {
           )}
           {success && (
             <p className="form-message success-notice" role="status">
-              {t("registrationSuccess")} <Link to="/admin">{t("adminTitle")}</Link>
+              {t("registrationSuccess")} <Link to="/my-profile">View your profile</Link>
             </p>
           )}
           {requestFailed && <p className="form-message error-notice" role="alert">{requestError || t("registrationError")}</p>}

@@ -129,6 +129,14 @@ module.exports = async function registerWorker(request, response) {
   let record;
   let photo;
   try {
+    const accessToken = String(request.headers.authorization || "").replace(/^Bearer\s+/i, "");
+    if (!accessToken) return respond(response, 401, { error: "Sign in to your worker account before registering." });
+    const authClient = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+      auth: { autoRefreshToken: false, persistSession: false },
+    });
+    const { data: { user }, error: authError } = await authClient.auth.getUser(accessToken);
+    if (authError || !user) return respond(response, 401, { error: "Your session expired. Please sign in again." });
+
     record = validateWorker(request.body?.worker);
     photo = parsePhoto(request.body?.photo);
     const forwardedFor = request.headers["x-vercel-forwarded-for"] || request.headers["x-forwarded-for"];
@@ -137,9 +145,10 @@ module.exports = async function registerWorker(request, response) {
 
     await verifyTurnstile(request.body?.turnstileToken, remoteIp);
 
-    const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-      auth: { autoRefreshToken: false, persistSession: false },
-    });
+    const supabase = authClient;
+    const { data: existingWorker, error: existingError } = await supabase.from("workers").select("id").eq("user_id", user.id).maybeSingle();
+    if (existingError) throw existingError;
+    if (existingWorker) return respond(response, 409, { error: "A worker profile already exists for this account. Manage it from My profile." });
     const ipHash = crypto.createHmac("sha256", process.env.RATE_LIMIT_SECRET).update(remoteIp).digest("hex");
     const { data: allowed, error: limitError } = await supabase.rpc("consume_registration_slot", { p_ip_hash: ipHash });
     if (limitError) {
@@ -163,6 +172,7 @@ module.exports = async function registerWorker(request, response) {
 
     const { error: insertError } = await supabase.from("workers").insert({
       id,
+      user_id: user.id,
       ...record,
       photo_path: photoPath,
     });

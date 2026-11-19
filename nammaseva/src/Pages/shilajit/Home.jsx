@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { categories } from "../../i18n/translations";
 import { useLanguage } from "../../i18n/LanguageContext";
+import LocationSearch from "../../Components/shilajit/LocationSearch";
 import acRepair from "../Rabi/images/acrepair.jpg";
 import carpenter from "../Rabi/images/carpenter.jpg";
 import electronics from "../Rabi/images/electronics.jpg";
@@ -126,6 +127,7 @@ export default function Home() {
   const navigate = useNavigate();
   const [service, setService] = useState("");
   const [location, setLocation] = useState("Tumakuru");
+  const [selectedPlace, setSelectedPlace] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== "undefined" && window.innerWidth > 900);
 
   useEffect(() => {
@@ -142,6 +144,11 @@ export default function Home() {
     const params = new URLSearchParams();
     if (service) params.set("service", service);
     if (location.trim()) params.set("locality", location.trim());
+    if (selectedPlace) {
+      params.set("area", selectedPlace.area);
+      params.set("lat", String(selectedPlace.latitude));
+      params.set("lon", String(selectedPlace.longitude));
+    }
     navigate(`/workers?${params.toString()}`);
   }
 
@@ -218,7 +225,12 @@ export default function Home() {
               </label>
               <label>
                 <span>Location</span>
-                <input value={location} onChange={(event) => setLocation(event.target.value)} aria-label="Your location" />
+                <LocationSearch
+                  value={location}
+                  onChange={(value, place) => { setLocation(value); setSelectedPlace(place); }}
+                  ariaLabel="Your location"
+                  placeholder="Search address, area or pincode"
+                />
               </label>
               <button type="submit" className="primary-button">Search services <span aria-hidden="true">→</span></button>
             </form>

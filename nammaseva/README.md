@@ -78,3 +78,9 @@ npm run build
 - Use the privacy and terms pages to explain the actual operator, retention period, and contact process before launch. The prototype does not yet include a retention/deletion workflow, worker self-service account, review submission, payments, or booking management.
 
 The old `db.json` file is legacy sample data and is not part of the Vercel/Supabase architecture. Do not copy its development data into production.
+
+### Worker accounts and profile management
+
+Workers create or sign in to an account at `/my-profile` before submitting `/register`. After registration, that page shows the application status and lets the owner edit public profile details, service areas, photo, and view approved feedback. Deleting the worker profile also deletes its reviews; the Supabase Auth account is signed out but remains available for a later registration.
+
+Before deploying this feature, apply `supabase/migrations/20261119000000_worker_accounts.sql` to the project. In Supabase Authentication, enable the Email provider and allow worker email signups; configure the site's redirect URL for the deployed domain and localhost. If email confirmation is enabled, workers must confirm the signup email before signing in. Existing worker rows created before this change have no account owner and cannot be self-managed; link them to an authenticated user through a trusted admin migration/process before promising existing workers access. Do not disable row-level security.

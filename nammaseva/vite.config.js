@@ -7,6 +7,13 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3000,
     strictPort: true,
+    proxy: {
+      "/api/location-search": {
+        target: "https://photon.komoot.io",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/location-search/, "/api"),
+      },
+    },
   },
   test: {
     globals: true,

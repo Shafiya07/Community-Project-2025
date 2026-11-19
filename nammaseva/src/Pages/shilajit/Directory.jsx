@@ -5,6 +5,7 @@ import { averageRating, getReviews, getWorkers } from "../../api/workers";
 import { categories } from "../../i18n/translations";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { demoWorkers } from "../../data/demoWorkers";
+import LocationSearch from "../../Components/shilajit/LocationSearch";
 import WorkerCard from "./WorkerCard";
 import "./Directory.css";
 
@@ -22,6 +23,7 @@ export default function Directory() {
   const [loadError, setLoadError] = useState(false);
   const [keyword, setKeyword] = useState(searchParams.get("q") || searchParams.get("service") || "");
   const [locality, setLocality] = useState(searchParams.get("locality") || "");
+  const [locationArea, setLocationArea] = useState(searchParams.get("area") || "");
   const [minimumExperience, setMinimumExperience] = useState(searchParams.get("experience") || "");
   const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
   const [sort, setSort] = useState(searchParams.get("sort") || "");
@@ -31,6 +33,7 @@ export default function Directory() {
   useEffect(() => {
     setKeyword(searchParams.get("q") || searchParams.get("service") || "");
     setLocality(searchParams.get("locality") || "");
+    setLocationArea(searchParams.get("area") || "");
     setActiveCategory(searchParams.get("category") || "");
   }, [searchParams]);
 
@@ -60,11 +63,6 @@ export default function Directory() {
     return () => { mounted = false; };
   }, []);
 
-  const localities = useMemo(() => (
-    [...new Set(workers.flatMap((worker) => asList(worker.serviceAreas)).filter(Boolean))]
-      .sort((a, b) => a.localeCompare(b))
-  ), [workers]);
-
   const categoryCounts = useMemo(() => {
     const counts = new Map();
     categories.forEach((category) => {
@@ -91,7 +89,8 @@ export default function Directory() {
     const terms = category ? category.terms.map((term) => term.toLocaleLowerCase()) : [];
     const selectedCategory = categories.find((item) => item.id === activeCategory);
     const selectedTerms = selectedCategory?.terms.map((term) => term.toLocaleLowerCase()) || [];
-    const isCitySearch = /^(tumakuru|tumkur|ತುಮಕೂರು)(,\s*karnataka)?$/i.test(locality.trim());
+    const areaQuery = (locationArea || locality).trim();
+    const isCitySearch = /^(tumakuru|tumkur|ತುಮಕೂರು)(,\s*karnataka)?$/i.test(areaQuery);
     const filtered = workers.filter((worker) => {
       const text = [
         worker.name, worker.fullName, worker.profession,
@@ -99,8 +98,11 @@ export default function Directory() {
       ].filter(Boolean).join(" ").toLocaleLowerCase();
       const matchesKeyword = !query || text.includes(query) || terms.some((term) => text.includes(term));
       const matchesCategory = !activeCategory || selectedTerms.some((term) => text.includes(term));
-      const matchesLocality = !locality || isCitySearch || asList(worker.serviceAreas)
-        .some((area) => area.toLocaleLowerCase().includes(locality.toLocaleLowerCase()));
+      const localityTerms = [areaQuery, locality].filter(Boolean).map((term) => term.toLocaleLowerCase());
+      const matchesLocality = !areaQuery || isCitySearch || asList(worker.serviceAreas).some((serviceArea) => {
+        const normalizedArea = serviceArea.toLocaleLowerCase();
+        return localityTerms.some((term) => normalizedArea.includes(term) || term.includes(normalizedArea));
+      });
       const matchesExperience = !minimumExperience || Number(worker.experience) >= Number(minimumExperience);
       const matchesVerified = !verifiedOnly || worker.verified === true;
       return matchesKeyword && matchesCategory && matchesLocality && matchesExperience && matchesVerified;
@@ -114,11 +116,12 @@ export default function Directory() {
       });
     }
     return filtered;
-  }, [keyword, locality, minimumExperience, verifiedOnly, sort, activeCategory, workers, reviews]);
+  }, [keyword, locality, locationArea, minimumExperience, verifiedOnly, sort, activeCategory, workers, reviews]);
 
   function clearFilters() {
     setKeyword("");
     setLocality("");
+    setLocationArea("");
     setMinimumExperience("");
     setVerifiedOnly(false);
     setSort("");
@@ -155,15 +158,32 @@ export default function Directory() {
     });
   }
 
-  function updateLocality(value) {
+  function selectLocation(value, place) {
     setLocality(value);
+    setLocationArea(place?.area || "");
     setSearchParams((current) => {
       const next = new URLSearchParams(current);
       if (value) next.set("locality", value);
       else next.delete("locality");
+      if (place) {
+        next.set("area", place.area);
+        next.set("lat", String(place.latitude));
+        next.set("lon", String(place.longitude));
+      } else {
+        next.delete("area");
+        next.delete("lat");
+        next.delete("lon");
+      }
       return next;
     });
   }
+
+  const latitude = Number(searchParams.get("lat"));
+  const longitude = Number(searchParams.get("lon"));
+  const hasMapLocation = Number.isFinite(latitude) && Number.isFinite(longitude) && searchParams.has("lat") && searchParams.has("lon");
+  const mapUrl = hasMapLocation
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${longitude - 0.025}%2C${latitude - 0.018}%2C${longitude + 0.025}%2C${latitude + 0.018}&layer=mapnik&marker=${latitude}%2C${longitude}`
+    : "https://www.openstreetmap.org/export/embed.html?bbox=77.06%2C13.28%2C77.18%2C13.39&layer=mapnik&marker=13.34%2C77.10";
 
   return (
     <>
@@ -186,16 +206,12 @@ export default function Directory() {
           </label>
           <label className="directory-search-field directory-location-field">
             <span aria-hidden="true">⌖</span>
-            <input
-              aria-label={t("locality")}
-              list="worker-localities"
+            <LocationSearch
+              ariaLabel={t("locality")}
               value={locality}
-              onChange={(event) => updateLocality(event.target.value)}
-              placeholder={t("localityPlaceholder")}
+              onChange={selectLocation}
+              placeholder="Search address, area or pincode"
             />
-            <datalist id="worker-localities">
-              {localities.map((area) => <option key={area} value={area} />)}
-            </datalist>
           </label>
           <button type="submit" className="button button-primary">{t("findButton")}</button>
         </form>
@@ -228,11 +244,11 @@ export default function Directory() {
           <aside className="filters-panel" aria-label={t("findWorkers")}>
             <label className="field-label directory-advanced-locality">
               {t("locality")}
-              <input
-                list="worker-localities"
+              <LocationSearch
                 value={locality}
-                onChange={(event) => updateLocality(event.target.value)}
-                placeholder={t("localityPlaceholder")}
+                onChange={selectLocation}
+                ariaLabel={t("locality")}
+                placeholder="Search address, area or pincode"
               />
             </label>
             <label className="field-label">
@@ -271,11 +287,7 @@ export default function Directory() {
             )}
             {viewMode === "map" && (
               <div className="directory-map">
-                <iframe
-                  title={t("tumakuruMap")}
-                  src="https://www.openstreetmap.org/export/embed.html?bbox=77.06%2C13.28%2C77.18%2C13.39&layer=mapnik&marker=13.34%2C77.10"
-                  loading="lazy"
-                />
+                <iframe title={t("tumakuruMap")} src={mapUrl} loading="lazy" />
                 <p>{t("mapLocationNote")}</p>
               </div>
             )}

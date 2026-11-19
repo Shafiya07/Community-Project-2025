@@ -11,6 +11,7 @@ export default function Navbar() {
     { to: "/workers", label: t("findWorkers") },
     { to: "/#categories", label: t("categories") },
     { to: "/register", label: t("registerWorker") },
+    { to: "/my-profile", label: "My profile" },
     { to: "/about", label: t("about") },
   ];
 

@@ -390,7 +390,7 @@
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
-.landing-search label span {
+.landing-search label > span {
   color: var(--text-muted);
   font-size: 9px;
   font-weight: 700;
@@ -1581,6 +1581,22 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   -webkit-text-fill-color: initial;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cta-register,
+.cta-register:visited {
+  position: relative;
+  z-index: 2;
+  min-width: 220px;
+  justify-content: center;
+  border: 2px solid #ffffff;
+  color: #1e1b4b !important;
+  -webkit-text-fill-color: #1e1b4b !important;
+}
+
+.cta-register span {
+  color: #4f46e5;
+  -webkit-text-fill-color: #4f46e5;
 }
 
 .cta-register:hover {

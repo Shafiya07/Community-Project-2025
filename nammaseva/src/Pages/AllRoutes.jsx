@@ -9,6 +9,7 @@ const WorkerProfile = React.lazy(() => import("./shilajit/WorkerProfile"));
 const About = React.lazy(() => import("./shilajit/About"));
 const InfoPage = React.lazy(() => import("./shilajit/InfoPage"));
 const Admin = React.lazy(() => import("./shilajit/Admin"));
+const WorkerAccount = React.lazy(() => import("./shilajit/WorkerAccount"));
 
 const AllRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AllRoutes = () => {
           <Route path="/workers" element={<Directory />} />
           <Route path="/workers/:id" element={<WorkerProfile />} />
           <Route path="/register" element={<WorkerRegistration />} />
+          <Route path="/my-profile" element={<WorkerAccount />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<InfoPage page="contact" />} />

@@ -79,11 +79,13 @@ export async function getReviews() {
 }
 
 export async function createWorker(worker, photo, turnstileToken) {
+  const { data: { session } } = await getSupabase().auth.getSession();
+  if (!session?.access_token) throw new Error("Please sign in or create your worker account before registering.");
   if (import.meta.env.PROD) {
     const photoData = photo ? await fileToPayload(photo) : null;
     const response = await fetch("/api/register-worker", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` },
       body: JSON.stringify({ worker, photo: photoData, turnstileToken }),
     });
     const result = await response.json().catch(() => ({}));
