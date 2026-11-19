@@ -58,7 +58,7 @@ function validateWorker(input) {
     working_hours: String(worker.workingHours || "").trim().slice(0, 100),
     pricing: String(worker.pricing || "").trim().slice(0, 200),
     published_contact: true,
-    status: "approved",
+    status: "pending",
     verified: false,
   };
 }
@@ -175,7 +175,7 @@ module.exports = async function registerWorker(request, response) {
       return respond(response, 500, { error: "Your registration could not be saved. Please try again." });
     }
 
-    return respond(response, 201, { id, status: "approved" });
+    return respond(response, 201, { id, status: "pending" });
   } catch (error) {
     if (error instanceof ValidationError) return respond(response, 400, { error: error.message });
     console.error("Worker registration failed:", error.message);
