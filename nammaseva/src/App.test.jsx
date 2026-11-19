@@ -101,7 +101,7 @@ test("disables registration and explains missing production anti-spam setup", as
     );
 
     expect(await screen.findByRole("alert")).toHaveTextContent(/VITE_TURNSTILE_SITE_KEY in Vercel/i);
-    expect(screen.getByRole("button", { name: /submit for review/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /list my profile/i })).toBeDisabled();
   } finally {
     vi.unstubAllEnvs();
   }
