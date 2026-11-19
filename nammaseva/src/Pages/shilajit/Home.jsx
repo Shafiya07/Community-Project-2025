@@ -63,6 +63,12 @@ const shortTermJobs = categories
     image: shortTermImages[category.id],
   }));
 
+const coveredCategoryIds = ["electrician", "plumber", "carpenter", "painter", "appliance-repair"];
+
+const extraHomeCategories = categories.filter(
+  (category) => !category.shortTerm && !coveredCategoryIds.includes(category.id),
+);
+
 const popularSearches = [
   { label: "AC repair", service: "AC Repair" },
   { label: "Cleaning", service: "Home Cleaning" },
@@ -215,7 +221,17 @@ export default function Home() {
                 <span>I need a service</span>
                 <select value={service} onChange={(event) => setService(event.target.value)}>
                   <option value="">Select a service</option>
-                  {exploreServices.map((item) => <option key={item.title} value={item.title}>{item.title}</option>)}
+                  <optgroup label="Home services">
+                    {exploreServices.map((item) => <option key={item.title} value={item.title}>{item.title}</option>)}
+                    {extraHomeCategories.map((category) => (
+                      <option key={category.id} value={category.en}>{category[language] || category.en}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Short-term work">
+                    {shortTermJobs.map((job) => (
+                      <option key={job.id} value={job.en}>{job[language] || job.en}</option>
+                    ))}
+                  </optgroup>
                 </select>
               </label>
               <label>
