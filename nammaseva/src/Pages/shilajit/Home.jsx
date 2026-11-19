@@ -126,16 +126,18 @@ export default function Home() {
   const navigate = useNavigate();
   const [service, setService] = useState("");
   const [location, setLocation] = useState("Tumakuru");
-  const [sidebarOpen, setSidebarOpen] = useState(() => typeof window !== "undefined" && window.innerWidth > 900);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    function syncSidebarToViewport() {
-      setSidebarOpen(window.innerWidth > 900);
+    if (!sidebarOpen) return undefined;
+
+    function closeOnEscape(event) {
+      if (event.key === "Escape") setSidebarOpen(false);
     }
 
-    window.addEventListener("resize", syncSidebarToViewport);
-    return () => window.removeEventListener("resize", syncSidebarToViewport);
-  }, []);
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [sidebarOpen]);
 
   function handleSearch(event) {
     event.preventDefault();
