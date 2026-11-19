@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "../../Components/shilajit/Navbar";
 import TurnstileField from "../../Components/shilajit/TurnstileField";
 import { createWorker, isValidIndianMobile, normalizeMobile } from "../../api/workers";
+import { turnstileSiteKey } from "../../config/turnstile";
 import { categories } from "../../i18n/translations";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./Directory.css";
@@ -27,7 +28,7 @@ function splitValues(value) {
 
 export default function WorkerRegistration() {
   const { language, t } = useLanguage();
-  const registrationUnavailable = import.meta.env.PROD && !import.meta.env.VITE_TURNSTILE_SITE_KEY;
+  const registrationUnavailable = import.meta.env.PROD && !turnstileSiteKey;
   const [form, setForm] = useState(initialForm);
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState("");

@@ -128,7 +128,7 @@ export default function WorkerAccount() {
     {message && <p className="account-message account-success" role="status">{message}</p>}
     {!supabase ? <section className="account-card account-auth"><h2>Profile accounts need setup</h2><p>This site is online, but its Supabase connection is not configured yet. Add the Supabase URL and anon key in Vercel Environment Variables, then redeploy to enable worker sign-in and profile management.</p></section> : !user ? <section className="account-card account-auth">
       <h2>{mode === "signin" ? "Sign in to your account" : "Create a worker account"}</h2>
-      <p>Your account keeps your worker profile private to you until it is approved for the directory.</p>
+      <p>After you submit your worker details, your profile appears in the public directory right away.</p>
       <form onSubmit={authenticate}>
         <label>Email<input type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></label>
         <label>Password<input type="password" autoComplete={mode === "signin" ? "current-password" : "new-password"} minLength="8" required value={password} onChange={(e) => setPassword(e.target.value)} /></label>

@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from "react";
+import { turnstileSiteKey } from "../../config/turnstile";
 
 const SCRIPT_ID = "cloudflare-turnstile-script";
 
 export default function TurnstileField({ resetKey, onVerify, label }) {
   const containerRef = useRef(null);
   const onVerifyRef = useRef(onVerify);
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+  const siteKey = turnstileSiteKey;
 
   useEffect(() => {
     onVerifyRef.current = onVerify;

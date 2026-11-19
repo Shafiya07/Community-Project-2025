@@ -20,7 +20,7 @@ The site is not live until you create and configure your own Vercel, Supabase, a
    on conflict (user_id) do nothing;
    ```
 
-Only users explicitly added to `public.admin_users` can review pending applications. The public API key has no permission to list pending records or upload/read their photos.
+New worker listings are published immediately after submission. Only users explicitly added to `public.admin_users` can moderate profiles if needed. The public API key cannot change a worker's publication or verification status.
 
 ### 2. Configure Cloudflare Turnstile
 
@@ -45,13 +45,13 @@ Never add a `VITE_` prefix to a server secret. Vite embeds every `VITE_*` variab
 
 If the worker form says registration protection is not configured, `VITE_TURNSTILE_SITE_KEY` is missing from the production build. Set the Turnstile site key for the Vercel Production environment and redeploy; the form intentionally disables submission rather than accepting an unprotected application.
 
-Vercel uses [`vercel.json`](./vercel.json) to build the React app, route browser paths to the SPA, and set baseline security headers. The `/api/register-worker` function validates submissions, checks Turnstile, rate-limits requests, stores the worker as pending, and uploads an optional JPEG/PNG/WebP photo (up to 2 MB). The service-role key exists only in this server-side function.
+Vercel uses [`vercel.json`](./vercel.json) to build the React app, route browser paths to the SPA, and set baseline security headers. The `/api/register-worker` function validates submissions, checks Turnstile, rate-limits requests, publishes the worker immediately, and uploads an optional JPEG/PNG/WebP photo (up to 2 MB). The service-role key exists only in this server-side function.
 
-### 4. Owner review
+### 4. Profile moderation (optional)
 
-Open `https://YOUR-HOSTNAME/admin`, sign in with the owner Supabase Auth account, then approve or reject pending applications. Approved profiles become visible in the public directory; uploaded photos remain in a private bucket and are shared using short-lived signed URLs. The worker's consent is required before their phone number can appear on an approved profile.
+Open `https://YOUR-HOSTNAME/admin` and sign in with the owner Supabase Auth account to moderate a profile if needed. Worker profiles appear in the public directory as soon as their registration is submitted; uploaded photos remain in a private bucket and are shared using short-lived signed URLs. The worker's consent is required before their phone number can appear on a profile.
 
-After a successful submission, the application is stored in the Supabase `public.workers` table with `status = 'pending'`. The owner sees it in the `/admin` dashboard's Pending applications queue. An optional photo is saved in the private `worker-photos` Storage bucket. The form shows a success message only after the server confirms the save.
+After a successful submission, the profile is stored in the Supabase `public.workers` table with `status = 'approved'` and appears in public search immediately. An optional photo is saved in the private `worker-photos` Storage bucket. The form shows a success message only after the server confirms the save.
 
 When there are no approved listings, the public directory shows a small set of static demo profiles so the profile flow can be previewed. Each demo is visibly labeled, uses fictional details, has no contact information, and is never represented as a real or verified worker. A Supabase configuration error also shows these demos with the same warning; other request failures remain visible as errors.
 
@@ -69,11 +69,11 @@ npm run build
 
 ## Data access and privacy
 
-- Public visitors can read approved workers and approved reviews only.
-- Pending applications and pending photos can only be read by configured administrators.
+- Public visitors can read published workers and approved reviews only.
+- Profile status can only be changed by the trusted server or configured administrators.
 - Registration never accepts an approval/verification status from the browser.
 - The database rate limiter stores a keyed hash of the source IP, not the raw IP.
-- Phone numbers are public only for approved listings with explicit publication consent.
+- Phone numbers are public only when the worker explicitly consents to publish them.
 - The directory map loads an OpenStreetMap embed and shows Tumakuru city center only; worker profiles do not collect precise coordinates, so it does not display individual worker locations.
 - Use the privacy and terms pages to explain the actual operator, retention period, and contact process before launch. The prototype does not yet include a retention/deletion workflow, worker self-service account, review submission, payments, or booking management.
 
@@ -81,6 +81,6 @@ The old `db.json` file is legacy sample data and is not part of the Vercel/Supab
 
 ### Worker accounts and profile management
 
-Workers create or sign in to an account at `/my-profile` before submitting `/register`. After registration, that page shows the application status and lets the owner edit public profile details, service areas, photo, and view approved feedback. Deleting the worker profile also deletes its reviews; the Supabase Auth account is signed out but remains available for a later registration.
+Workers create or sign in to an account at `/my-profile` before submitting `/register`. After registration, the profile is public immediately; `/my-profile` lets the owner edit profile details, service areas, photo, and view approved feedback. Deleting the worker profile also deletes its reviews; the Supabase Auth account is signed out but remains available for a later registration.
 
 Before deploying this feature, apply `supabase/migrations/20261119000000_worker_accounts.sql` to the project. In Supabase Authentication, enable the Email provider and allow worker email signups; configure the site's redirect URL for the deployed domain and localhost. If email confirmation is enabled, workers must confirm the signup email before signing in. Existing worker rows created before this change have no account owner and cannot be self-managed; link them to an authenticated user through a trusted admin migration/process before promising existing workers access. Do not disable row-level security.
