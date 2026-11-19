@@ -59,9 +59,9 @@ test("shows demo workers and opens a clearly labeled sample profile when none ar
   expect(await screen.findByText(/fictional sample profiles for preview only/i)).toBeInTheDocument();
   fireEvent.click((await screen.findAllByRole("link", { name: /view profile/i }))[0]);
 
-  expect(await screen.findByRole("heading", { name: "Asha (Demo)" })).toBeInTheDocument();
+  expect(await screen.findByRole("heading", { name: "Suresh (Demo)" })).toBeInTheDocument();
   expect(screen.getByText(/fictional examples, not a real worker/i)).toBeInTheDocument();
-  expect(screen.getByText(/Bridal mehendi, Arabic patterns, Festival designs/i)).toBeInTheDocument();
+  expect(screen.getByText(/House wiring, Fan installation, Switchboard repair, MCB fitting/i)).toBeInTheDocument();
   expect(screen.queryByRole("link", { name: /call worker/i })).not.toBeInTheDocument();
 });
 
@@ -76,5 +76,5 @@ test("shows sample profiles when Supabase is not configured", async () => {
   );
 
   expect(await screen.findByText(/fictional sample profiles for preview only/i)).toBeInTheDocument();
-  expect(screen.getByRole("heading", { name: "Asha (Demo)" })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "Suresh (Demo)" })).toBeInTheDocument();
 });
