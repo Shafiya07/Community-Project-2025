@@ -7,6 +7,7 @@ export default defineConfig({
     host: "0.0.0.0",
     port: 3000,
     strictPort: true,
+    allowedHosts: ["sb-546zu89e3rq1.vercel.run"],
   },
   test: {
     globals: true,
