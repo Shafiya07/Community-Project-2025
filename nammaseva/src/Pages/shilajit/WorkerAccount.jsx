@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../Components/shilajit/Navbar";
 import { getSupabase } from "../../api/supabase";
@@ -14,7 +14,8 @@ const listFields = new Set(["service_areas", "skills", "languages"]);
 const asList = (value) => (Array.isArray(value) ? value.join(", ") : value || "");
 
 export default function WorkerAccount() {
-  const supabase = getSupabase();
+  const supabaseConfigured = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+  const supabase = useMemo(() => (supabaseConfigured ? getSupabase() : null), [supabaseConfigured]);
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [worker, setWorker] = useState(null);
@@ -29,6 +30,7 @@ export default function WorkerAccount() {
   const [error, setError] = useState("");
 
   const loadProfile = useCallback(async () => {
+    if (!supabase) return;
     setError("");
     try {
       const { data: { user: signedInUser }, error: authError } = await supabase.auth.getUser();
@@ -53,7 +55,7 @@ export default function WorkerAccount() {
     } catch (loadError) { setError(loadError.message || "Could not load your profile."); }
   }, [supabase]);
 
-  useEffect(() => { loadProfile(); }, [loadProfile]);
+  useEffect(() => { if (supabase) loadProfile(); }, [loadProfile, supabase]);
 
   async function authenticate(event) {
     event.preventDefault(); setBusy(true); setError(""); setMessage("");
@@ -124,7 +126,7 @@ export default function WorkerAccount() {
     <section className="page-heading"><p className="eyebrow">WORKER DASHBOARD</p><h1>My worker profile</h1><p>Manage your public details, location, profile photo, and customer feedback.</p></section>
     {error && <p className="account-message account-error" role="alert">{error}</p>}
     {message && <p className="account-message account-success" role="status">{message}</p>}
-    {!user ? <section className="account-card account-auth">
+    {!supabase ? <section className="account-card account-auth"><h2>Profile accounts need setup</h2><p>This site is online, but its Supabase connection is not configured yet. Add the Supabase URL and anon key in Vercel Environment Variables, then redeploy to enable worker sign-in and profile management.</p></section> : !user ? <section className="account-card account-auth">
       <h2>{mode === "signin" ? "Sign in to your account" : "Create a worker account"}</h2>
       <p>Your account keeps your worker profile private to you until it is approved for the directory.</p>
       <form onSubmit={authenticate}>
