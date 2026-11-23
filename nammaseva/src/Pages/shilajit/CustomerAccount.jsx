@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../../Components/shilajit/Navbar";
 import { getSupabase } from "../../api/supabase";
 import { getBookingReviews, getCustomerBookings, getCustomerProfile, saveCustomerProfile, submitBookingReview } from "../../api/bookings";
+import CustomerWorkRequests from "./CustomerWorkRequests";
 import "./WorkerAccount.css";
 
 const statusLabel = {
@@ -128,6 +129,7 @@ export default function CustomerAccount() {
           <button className="button button-primary" disabled={busy}>{busy ? "Saving…" : "Save customer profile"}</button>
         </form>
       </section>
+      <CustomerWorkRequests user={user} profile={profile} />
       <section className="customer-bookings-section">
         <div className="customer-section-heading"><div><p className="eyebrow">YOUR SERVICE HISTORY</p><h2>My bookings</h2></div><Link className="button button-secondary" to="/workers">Find a worker</Link></div>
         {!bookings.length ? <div className="account-card account-empty"><h2>No bookings yet</h2><p>Your worker bookings and their progress will appear here.</p><Link className="button button-primary" to="/workers">Browse workers →</Link></div> : <div className="booking-list">

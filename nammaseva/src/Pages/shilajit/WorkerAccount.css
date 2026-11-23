@@ -68,5 +68,38 @@
 .booking-privacy-note { margin: 0; font-size: 13px; }
 .booking-success h2 { color: #151d32; }
 .booking-success button { margin-top: 10px; }
+.work-requests-section { margin: 38px 0 48px; scroll-margin-top: 110px; }
+.work-request-intro { color:#65748b; line-height:1.65; max-width:850px; margin:0 0 20px; }
+.work-request-form { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:20px 0 36px; }
+.work-request-form h3, .work-request-form .work-request-privacy, .work-request-form button { grid-column:1/-1; }
+.work-request-form h3,.work-request-list>h3 { color:#151d32; margin:0; }
+.work-request-form label { display:grid; gap:8px; color:#34435b; font-weight:650; }
+.work-request-form input,.work-request-form textarea { box-sizing:border-box; width:100%; border:1px solid #d6dfed; border-radius:12px; padding:13px 14px; color:#172036; background:#fff; font:inherit; }
+.work-request-form button { justify-self:start; }
+.work-request-privacy { color:#65748b; font-size:13px; margin:0; }
+.work-request-list { display:grid; gap:16px; }
+.work-request-card { display:grid; gap:12px; }
+.work-request-card>p { margin:0; color:#46556c; line-height:1.6; }
+.work-request-unread { border-color:#7c72f5; box-shadow:0 0 0 3px #7667ff18; }
+.work-replies { display:grid; gap:12px; border-top:1px solid #e7ebf2; padding-top:14px; }
+.work-reply { display:grid; grid-template-columns:1fr auto; align-items:center; gap:12px; padding:14px; border:1px solid #e2e8f2; border-radius:14px; }
+.work-reply p { color:#65748b; margin:6px 0 0; }
+.work-reply .work-chat { grid-column:1/-1; }
+.work-request-actions { display:flex; flex-wrap:wrap; gap:10px; padding-top:8px; }
+.work-interest-note { color:#176c43!important; font-weight:650; }
+.work-chat { border:1px solid #dfe5f0; border-radius:16px; background:#fbfcff; padding:14px; margin-top:12px; }
+.work-chat-heading { display:flex; justify-content:space-between; align-items:center; color:#151d32; gap:12px; }
+.work-chat-heading button { border:0; background:none; color:#4d58df; font:inherit; font-weight:700; cursor:pointer; }
+.work-chat-messages { display:flex; flex-direction:column; gap:10px; max-height:300px; overflow:auto; padding:14px 2px; }
+.work-chat-messages>p { display:grid; gap:4px; max-width:85%; margin:0; }
+.work-chat-messages>p span { border-radius:14px; padding:10px 13px; line-height:1.45; }
+.work-chat-messages time { color:#7b8798; font-size:11px; }
+.work-chat-mine { align-self:flex-end; text-align:right; }.work-chat-mine span { background:#635bea; color:white; }
+.work-chat-theirs { align-self:flex-start; }.work-chat-theirs span { background:#edf0f8; color:#25324a; }
+.work-chat-empty { color:#65748b; }
+.work-chat-form { display:grid; grid-template-columns:1fr auto; gap:8px; }
+.work-chat-form input { min-width:0; border:1px solid #d6dfed; border-radius:11px; padding:11px 12px; font:inherit; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+@media(max-width:700px){.work-request-form{grid-template-columns:1fr}.work-request-form h3,.work-request-form .work-request-privacy,.work-request-form button{grid-column:auto}.work-reply{grid-template-columns:1fr}.work-chat-form{grid-template-columns:1fr}.work-chat-form button{justify-self:start}}
 @media (max-width: 640px) { .account-edit-form { grid-template-columns: 1fr; }.account-span { grid-column: auto; }.account-topline { align-items: flex-start; flex-direction: column; }.account-actions { align-items: flex-start; flex-direction: column; } }
 @media (max-width: 700px) { .customer-profile-form, .booking-request-grid { grid-template-columns: 1fr; }.customer-section-heading { align-items: flex-start; flex-direction: column; }.booking-card-top { flex-direction: column; }.booking-worker-actions { align-items: flex-start; flex-direction: column; }.customer-profile-form button { grid-column: auto; } }

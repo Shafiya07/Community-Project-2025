@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../Components/shilajit/Navbar";
 import { getSupabase } from "../../api/supabase";
 import WorkerBookings from "./WorkerBookings";
+import WorkerWorkRequests from "./WorkerWorkRequests";
 import "./WorkerAccount.css";
 
 const editableFields = [
@@ -40,7 +41,7 @@ export default function WorkerAccount() {
       setUser(signedInUser || null);
       if (!signedInUser) { setWorker(null); return; }
       const { data, error: workerError } = await supabase.from("workers")
-        .select("id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,consultation_fee,photo_path,published_contact,status,availability_status,verified,created_at")
+        .select("id,user_id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,consultation_fee,photo_path,published_contact,status,availability_status,verified,created_at")
         .eq("user_id", signedInUser.id).maybeSingle();
       if (workerError) throw workerError;
       setWorker(data || null);
@@ -177,6 +178,7 @@ export default function WorkerAccount() {
           </form>
           <section className="account-feedback"><h2>Customer feedback</h2>{reviews.length ? reviews.map((review) => <article key={review.id}><strong>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)} <time>{new Date(review.created_at).toLocaleDateString()}</time></strong><p>{review.text || "Rating only"}</p></article>) : <p>No approved feedback yet. Customer reviews will appear here.</p>}</section>
           <WorkerBookings workerId={worker.id} />
+          <div id="work-requests"><WorkerWorkRequests worker={worker} user={user} /></div>
         </>}
     </section>}
   </main></>;

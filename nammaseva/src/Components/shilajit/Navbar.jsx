@@ -13,6 +13,7 @@ export default function Navbar() {
     { to: "/register", label: t("registerWorker") },
     { to: "/my-profile", label: "My profile" },
     { to: "/my-account", label: "My bookings" },
+    { to: "/my-account#work-requests", label: "Post a job" },
     { to: "/about", label: t("about") },
   ];
 
