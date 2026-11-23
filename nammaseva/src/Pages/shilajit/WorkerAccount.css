@@ -16,6 +16,9 @@
 .account-profile-heading img, .account-avatar { width: 82px; height: 82px; border-radius: 50%; object-fit: cover; background: #eeeaff; display: grid; place-items: center; color: #6055e8; font-size: 32px; font-weight: 800; }
 .account-profile-heading h2 { margin: 0; color: #141d33; }.account-profile-heading p { color: #68768d; margin: 6px 0 0; text-transform: capitalize; }
 .worker-status { font-size: 13px; font-weight: 750; }.status-approved { color: #16814b; }.status-pending { color: #b16b09; }.status-rejected, .status-suspended { color: #b43940; }
+.worker-availability-control { display:flex; justify-content:space-between; align-items:center; gap:20px; margin:28px 0; padding:20px; border:1px solid #dfe5f0; border-radius:18px; background:#f9faff; }
+.worker-availability-control h3 { margin:0 0 6px; font-size:18px; }.worker-availability-control p { margin:0; color:#65758f; }
+.availability-actions { display:flex; flex-wrap:wrap; gap:8px; }.availability-option { border:1px solid #d5dced; border-radius:999px; padding:10px 14px; color:#27334a; background:#fff; font-weight:700; cursor:pointer; }.availability-option.is-selected { color:#fff; border-color:#625df5; background:#625df5; }.availability-option:disabled { cursor:default; opacity:.82; }
 .account-edit-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }.account-span { grid-column: 1 / -1; }
 .account-edit-form small { color: #748197; font-weight: 400; }.account-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; padding-top: 6px; }
 .account-delete { border: 0; background: transparent; color: #b42332; font: inherit; font-weight: 700; cursor: pointer; padding: 12px; }

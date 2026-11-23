@@ -80,6 +80,10 @@ export default function WorkerProfile() {
                   <h1>{worker.name || worker.fullName}</h1>
                   {worker.isDemo && <span className="demo-badge">{t("demoBadge")}</span>}
                   <p className="worker-profession">{worker.profession}</p>
+                  {!worker.isDemo && <span className={`availability-badge availability-${worker.availabilityStatus}`} role="status">
+                    <span aria-hidden="true" />
+                    {worker.availabilityStatus === "busy" ? "Currently busy" : worker.availabilityStatus === "unavailable" ? "Unavailable right now" : "Available now"}
+                  </span>}
                   {worker.verified === true && <span className="verified-badge">✓ {t("verified")}</span>}
                 </div>
               </div>

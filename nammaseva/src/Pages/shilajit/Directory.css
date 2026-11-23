@@ -1176,3 +1176,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .directory-search .button { width: 100%; grid-column: 1; }
   .profile-top { flex-direction: column; align-items: flex-start; text-align: left; }
 }
+
+.availability-badge { display:inline-flex; align-items:center; gap:8px; margin-top:8px; padding:7px 12px; border-radius:999px; font-size:14px; font-weight:750; }
+.availability-badge > span { width:9px; height:9px; border-radius:50%; background:currentColor; }
+.availability-available { color:#137a49; background:#e7f8ef; }
+.availability-busy { color:#a75e08; background:#fff4dc; }
+.availability-unavailable { color:#a8323c; background:#ffebed; }

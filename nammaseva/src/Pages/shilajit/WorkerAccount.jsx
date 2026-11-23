@@ -40,7 +40,7 @@ export default function WorkerAccount() {
       setUser(signedInUser || null);
       if (!signedInUser) { setWorker(null); return; }
       const { data, error: workerError } = await supabase.from("workers")
-        .select("id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,pricing,photo_path,published_contact,status,verified,created_at")
+        .select("id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,pricing,photo_path,published_contact,status,availability_status,verified,created_at")
         .eq("user_id", signedInUser.id).maybeSingle();
       if (workerError) throw workerError;
       setWorker(data || null);
@@ -122,6 +122,17 @@ export default function WorkerAccount() {
     finally { setBusy(false); }
   }
 
+  async function setAvailability(availability_status) {
+    setBusy(true); setError(""); setMessage("");
+    try {
+      const { error: updateError } = await supabase.from("workers").update({ availability_status }).eq("id", worker.id);
+      if (updateError) throw updateError;
+      setWorker({ ...worker, availability_status });
+      setMessage("Your availability has been updated.");
+    } catch (availabilityError) { setError(availabilityError.message || "Could not update your availability."); }
+    finally { setBusy(false); }
+  }
+
   async function signOut() { await supabase.auth.signOut(); setUser(null); setWorker(null); setMessage("You are signed out."); }
 
   return <><Navbar /><main className="page-shell worker-account-shell">
@@ -147,6 +158,14 @@ export default function WorkerAccount() {
             {worker.photoUrl ? <img src={worker.photoUrl} alt={`${worker.name} profile`} /> : <div className="account-avatar" aria-hidden="true">{worker.name?.slice(0, 1)}</div>}
             <div><h2>{worker.name}</h2><p>{worker.profession} · <span className={`worker-status status-${worker.status}`}>{worker.status}</span></p></div>
           </div>
+          <section className="worker-availability-control" aria-labelledby="availability-heading">
+            <div><h3 id="availability-heading">Your availability</h3><p>Customers see this on your public profile. Active Namma Seva jobs can mark you busy automatically.</p></div>
+            <div className="availability-actions">
+              <button type="button" className={`availability-option ${worker.availability_status === "available" ? "is-selected" : ""}`} disabled={busy || worker.availability_status === "available"} onClick={() => setAvailability("available")}>Available</button>
+              <button type="button" className={`availability-option ${worker.availability_status === "busy" ? "is-selected" : ""}`} disabled={busy || worker.availability_status === "busy"} onClick={() => setAvailability("busy")}>Busy</button>
+              <button type="button" className={`availability-option ${worker.availability_status === "unavailable" ? "is-selected" : ""}`} disabled={busy || worker.availability_status === "unavailable"} onClick={() => setAvailability("unavailable")}>Unavailable</button>
+            </div>
+          </section>
           <form className="account-edit-form" onSubmit={saveProfile}>
             {editableFields.map(([field, label]) => <label key={field} className={field === "description" ? "account-span" : ""}>{label}
               {field === "description" ? <textarea rows="4" maxLength="500" value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} required /> :
