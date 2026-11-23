@@ -125,9 +125,9 @@ export default function WorkerAccount() {
   async function setAvailability(availability_status) {
     setBusy(true); setError(""); setMessage("");
     try {
-      const { error: updateError } = await supabase.from("workers").update({ availability_status }).eq("id", worker.id);
+      const { data, error: updateError } = await supabase.from("workers").update({ availability_status }).eq("id", worker.id).select("availability_status").single();
       if (updateError) throw updateError;
-      setWorker({ ...worker, availability_status });
+      setWorker({ ...worker, availability_status: data.availability_status });
       setMessage("Your availability has been updated.");
     } catch (availabilityError) { setError(availabilityError.message || "Could not update your availability."); }
     finally { setBusy(false); }

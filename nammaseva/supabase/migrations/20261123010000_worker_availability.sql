@@ -48,4 +48,28 @@ create trigger sync_worker_availability_from_booking
 
 revoke all on function public.sync_worker_availability_from_booking() from public, anon, authenticated;
 
+create or replace function public.keep_worker_busy_during_active_booking()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.availability_status <> 'busy' and exists (
+    select 1 from public.bookings
+    where worker_id = new.id and status = 'in_progress'
+  ) then
+    new.availability_status := 'busy';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists keep_worker_busy_during_active_booking on public.workers;
+create trigger keep_worker_busy_during_active_booking
+  before update of availability_status on public.workers
+  for each row execute function public.keep_worker_busy_during_active_booking();
+
+revoke all on function public.keep_worker_busy_during_active_booking() from public, anon, authenticated;
+
 grant update (availability_status) on public.workers to authenticated;
