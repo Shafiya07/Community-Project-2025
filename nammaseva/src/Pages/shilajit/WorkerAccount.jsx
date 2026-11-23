@@ -9,7 +9,7 @@ const editableFields = [
   ["name", "Full name"], ["phone", "Mobile number"], ["profession", "Profession"],
   ["experience", "Years of experience"], ["service_areas", "Service areas (comma separated)"],
   ["skills", "Skills (comma separated)"], ["languages", "Languages (comma separated)"],
-  ["working_hours", "Working hours"], ["pricing", "Pricing"], ["description", "About your work"],
+  ["working_hours", "Working hours"], ["consultation_fee", "First visit / inspection fee (₹)"], ["description", "About your work"],
 ];
 const listFields = new Set(["service_areas", "skills", "languages"]);
 const asList = (value) => (Array.isArray(value) ? value.join(", ") : value || "");
@@ -40,7 +40,7 @@ export default function WorkerAccount() {
       setUser(signedInUser || null);
       if (!signedInUser) { setWorker(null); return; }
       const { data, error: workerError } = await supabase.from("workers")
-        .select("id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,pricing,photo_path,published_contact,status,availability_status,verified,created_at")
+        .select("id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,consultation_fee,photo_path,published_contact,status,availability_status,verified,created_at")
         .eq("user_id", signedInUser.id).maybeSingle();
       if (workerError) throw workerError;
       setWorker(data || null);
@@ -84,7 +84,7 @@ export default function WorkerAccount() {
         const raw = form[field];
         updates[field] = listFields.has(field)
           ? String(asList(raw)).split(",").map((item) => item.trim()).filter(Boolean)
-          : field === "experience" ? Number(raw) : String(raw || "").trim();
+          : field === "experience" ? Number(raw) : field === "consultation_fee" ? (raw === "" ? null : Number(raw)) : String(raw || "").trim();
       }
       if (photo) {
         if (!["image/jpeg", "image/png", "image/webp"].includes(photo.type) || photo.size > 2 * 1024 * 1024) {
@@ -169,7 +169,8 @@ export default function WorkerAccount() {
           <form className="account-edit-form" onSubmit={saveProfile}>
             {editableFields.map(([field, label]) => <label key={field} className={field === "description" ? "account-span" : ""}>{label}
               {field === "description" ? <textarea rows="4" maxLength="500" value={form[field] || ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} required /> :
-                <input type={field === "experience" ? "number" : "text"} min={field === "experience" ? "0" : undefined} value={asList(form[field])} onChange={(e) => setForm({ ...form, [field]: e.target.value })} required={["name", "phone", "profession", "experience", "service_areas", "languages"].includes(field)} />}
+                <input type={field === "experience" || field === "consultation_fee" ? "number" : "text"} min={field === "experience" || field === "consultation_fee" ? "0" : undefined} max={field === "consultation_fee" ? "500000" : undefined} step={field === "consultation_fee" ? "0.01" : undefined} value={form[field] ?? ""} onChange={(e) => setForm({ ...form, [field]: e.target.value })} required={["name", "phone", "profession", "experience", "service_areas", "languages"].includes(field)} />}
+              {field === "consultation_fee" && <small className="field-help">Only the first visit / inspection fee. Confirm the actual work estimate with the customer after inspection.</small>}
             </label>)}
             <label className="account-span">Change profile photo<input type="file" accept="image/jpeg,image/png,image/webp" onChange={(e) => setPhoto(e.target.files?.[0] || null)} /><small>JPEG, PNG, or WebP · max 2 MB</small></label>
             <div className="account-span account-actions"><button className="button button-primary" disabled={busy}>{busy ? "Saving…" : "Save changes"}</button><button type="button" className="account-delete" disabled={busy} onClick={deleteProfile}>Delete my profile</button></div>

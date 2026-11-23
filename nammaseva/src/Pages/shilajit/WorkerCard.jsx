@@ -20,6 +20,8 @@ export default function WorkerCard({ worker, rating }) {
         </div>
         {worker.isDemo && <span className="demo-badge">{t("demoBadge")}</span>}
         <p className="worker-profession">{profession}</p>
+        {!worker.isDemo && <span className={`availability-badge availability-${worker.availabilityStatus || "available"}`}><span aria-hidden="true" />{worker.availabilityStatus === "busy" ? "Currently busy" : worker.availabilityStatus === "unavailable" ? "Unavailable" : "Available now"}</span>}
+        {worker.consultationFee != null && <p className="worker-meta worker-visit-fee">First visit / inspection: ₹{Number(worker.consultationFee).toLocaleString("en-IN")}</p>}
         <p className="worker-meta">{Number(worker.experience) || 0} {Number(worker.experience) === 1 ? t("year") : t("years")}</p>
         {areas.length > 0 && <p className="worker-meta">{areas.join(", ")}</p>}
         {rating ? (

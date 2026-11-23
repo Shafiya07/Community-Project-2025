@@ -1,6 +1,6 @@
 import { getSupabase } from "./supabase";
 
-const WORKER_FIELDS = "id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,pricing,photo_path,published_contact,status,availability_status,verified,created_at";
+const WORKER_FIELDS = "id,name,phone,profession,skills,experience,service_areas,description,languages,working_hours,consultation_fee,photo_path,published_contact,status,availability_status,verified,created_at";
 
 function throwOnError(error) {
   if (error) throw new Error(error.message || "The directory request failed.");
@@ -30,7 +30,7 @@ function toWorker(worker) {
     description: worker.description,
     languages: worker.languages || [],
     workingHours: worker.working_hours || "",
-    pricing: worker.pricing || "",
+    consultationFee: worker.consultation_fee == null ? null : Number(worker.consultation_fee),
     photo: "",
     publishedContact: worker.published_contact,
     status: worker.status,

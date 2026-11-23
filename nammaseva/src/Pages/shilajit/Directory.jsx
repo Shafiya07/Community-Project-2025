@@ -26,7 +26,9 @@ export default function Directory() {
   const [locationArea, setLocationArea] = useState(searchParams.get("area") || "");
   const [minimumExperience, setMinimumExperience] = useState(searchParams.get("experience") || "");
   const [verifiedOnly, setVerifiedOnly] = useState(searchParams.get("verified") === "true");
-  const [sort, setSort] = useState(searchParams.get("sort") || "");
+  const [sort, setSort] = useState(searchParams.get("sort") || "fee");
+  const [maxVisitFee, setMaxVisitFee] = useState("");
+  const [availableOnly, setAvailableOnly] = useState(true);
   const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "");
   const [viewMode, setViewMode] = useState("list");
 
@@ -105,9 +107,19 @@ export default function Directory() {
       });
       const matchesExperience = !minimumExperience || Number(worker.experience) >= Number(minimumExperience);
       const matchesVerified = !verifiedOnly || worker.verified === true;
-      return matchesKeyword && matchesCategory && matchesLocality && matchesExperience && matchesVerified;
+      const matchesAvailability = !availableOnly || worker.availabilityStatus === "available" || worker.isDemo;
+      const fee = worker.consultationFee == null ? null : Number(worker.consultationFee);
+      const matchesVisitFee = !maxVisitFee || (fee !== null && Number.isFinite(fee) && fee <= Number(maxVisitFee));
+      return matchesKeyword && matchesCategory && matchesLocality && matchesExperience && matchesVerified && matchesAvailability && matchesVisitFee;
     });
 
+    if (sort === "fee") {
+      return filtered.sort((a, b) => {
+        const feeA = a.consultationFee == null ? Number.POSITIVE_INFINITY : Number(a.consultationFee);
+        const feeB = b.consultationFee == null ? Number.POSITIVE_INFINITY : Number(b.consultationFee);
+        return feeA - feeB;
+      });
+    }
     if (sort === "rating") {
       return filtered.sort((a, b) => {
         const ratingA = averageRating(reviews, a.id);
@@ -116,7 +128,7 @@ export default function Directory() {
       });
     }
     return filtered;
-  }, [keyword, locality, locationArea, minimumExperience, verifiedOnly, sort, activeCategory, workers, reviews]);
+  }, [keyword, locality, locationArea, minimumExperience, verifiedOnly, sort, activeCategory, workers, reviews, maxVisitFee, availableOnly]);
 
   function clearFilters() {
     setKeyword("");
@@ -124,7 +136,9 @@ export default function Directory() {
     setLocationArea("");
     setMinimumExperience("");
     setVerifiedOnly(false);
-    setSort("");
+    setSort("fee");
+    setMaxVisitFee("");
+    setAvailableOnly(true);
     setActiveCategory("");
     setSearchParams({});
   }
@@ -252,6 +266,15 @@ export default function Directory() {
               />
             </label>
             <label className="field-label">
+              {t("maxVisitFee")}
+              <input type="number" min="0" max="500000" step="0.01" value={maxVisitFee} onChange={(event) => setMaxVisitFee(event.target.value)} placeholder="Any fee" />
+              <small className="field-help">{t("visitFeeFilterHelp")}</small>
+            </label>
+            <label className="checkbox-label">
+              <input type="checkbox" checked={availableOnly} onChange={(event) => setAvailableOnly(event.target.checked)} />
+              {t("availableOnly")}
+            </label>
+            <label className="field-label">
               {t("experience")}
               <select value={minimumExperience} onChange={(event) => setMinimumExperience(event.target.value)}>
                 <option value="">{t("anyExperience")}</option>
@@ -266,9 +289,10 @@ export default function Directory() {
               {t("verifiedOnly")}
             </label>
             <label className="field-label">
-              {t("sortRating")}
-              <select value={sort} onChange={(event) => setSort(event.target.value)} disabled={!reviews.some((review) => review.status === "approved")}>
+              {t("sortResults")}
+              <select value={sort} onChange={(event) => setSort(event.target.value)}>
                 <option value="">{t("anySort")}</option>
+                <option value="fee">{t("sortFee")}</option>
                 <option value="rating">{t("sortRating")}</option>
               </select>
             </label>

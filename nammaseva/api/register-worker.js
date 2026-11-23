@@ -33,6 +33,7 @@ function validateWorker(input) {
   const phone = String(worker.phone || "").replace(/\D/g, "").slice(-10);
   const profession = String(worker.profession || "").trim();
   const experience = Number(worker.experience);
+  const consultationFee = worker.consultationFee == null || worker.consultationFee === "" ? null : Number(worker.consultationFee);
   const serviceAreas = normalizeList(worker.serviceAreas, 20, 100);
   const languages = normalizeList(worker.languages, 10, 50);
   const description = String(worker.description || "").trim();
@@ -41,6 +42,7 @@ function validateWorker(input) {
   if (!/^[6-9]\d{9}$/.test(phone)) throw new ValidationError("Enter a valid 10-digit Indian mobile number.");
   if (!profession || profession.length > 100) throw new ValidationError("Choose a valid profession.");
   if (!Number.isInteger(experience) || experience < 0 || experience > 80) throw new ValidationError("Enter valid years of experience.");
+  if (consultationFee !== null && (!Number.isFinite(consultationFee) || consultationFee < 0 || consultationFee > 500000 || Math.round(consultationFee * 100) !== consultationFee * 100)) throw new ValidationError("Enter a valid first visit fee between ₹0 and ₹5,00,000.");
   if (!serviceAreas.length) throw new ValidationError("Add at least one service area.");
   if (!languages.length) throw new ValidationError("Add at least one spoken language.");
   if (!description || description.length > 500) throw new ValidationError("Add a description of up to 500 characters.");
@@ -56,7 +58,7 @@ function validateWorker(input) {
     description,
     languages,
     working_hours: String(worker.workingHours || "").trim().slice(0, 100),
-    pricing: String(worker.pricing || "").trim().slice(0, 200),
+    consultation_fee: consultationFee,
     published_contact: true,
     status: "approved",
     verified: false,

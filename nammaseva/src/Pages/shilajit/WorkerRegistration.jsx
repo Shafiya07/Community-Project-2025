@@ -18,7 +18,7 @@ const initialForm = {
   description: "",
   languages: "",
   workingHours: "",
-  pricing: "",
+  consultationFee: "",
   publishedContact: false,
 };
 
@@ -105,7 +105,7 @@ export default function WorkerRegistration() {
         description: form.description.trim(),
         languages: splitValues(form.languages),
         workingHours: form.workingHours.trim(),
-        pricing: form.pricing.trim(),
+        consultationFee: form.consultationFee === "" ? null : Number(form.consultationFee),
         publishedContact: true,
       }, photo, turnstileToken);
       setForm(initialForm);
@@ -183,8 +183,9 @@ export default function WorkerRegistration() {
               <input name="workingHours" value={form.workingHours} onChange={update} />
             </label>
             <label className="field-label">
-              {t("pricingInput")}
-              <input name="pricing" value={form.pricing} onChange={update} />
+              {t("visitFeeInput")}
+              <input name="consultationFee" type="number" min="0" max="500000" step="0.01" value={form.consultationFee} onChange={update} />
+              <small className="field-help">{t("visitFeeHelp")}</small>
             </label>
             <label className="field-label form-span">
               {t("description")} *

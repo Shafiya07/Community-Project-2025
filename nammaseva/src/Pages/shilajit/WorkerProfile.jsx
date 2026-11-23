@@ -98,7 +98,7 @@ export default function WorkerProfile() {
                 {displayList(worker.languages) && <section><h2>{t("languages")}</h2><p>{displayList(worker.languages)}</p></section>}
                 {worker.description && <section><h2>{t("aboutWorker")}</h2><p>{worker.description}</p></section>}
                 {worker.workingHours && <section><h2>{t("workingHours")}</h2><p>{worker.workingHours}</p></section>}
-                {worker.pricing && <section><h2>{t("pricing")}</h2><p>{worker.pricing}</p></section>}
+                {worker.consultationFee != null && <section><h2>{t("visitFee")}</h2><p>₹{Number(worker.consultationFee).toLocaleString("en-IN")}</p><p className="fee-disclaimer">{t("finalQuoteNote")}</p></section>}
                 <section>
                   <h2>{t("reviews")}</h2>
                   {rating ? <p className="worker-rating">★ {rating.average} · {rating.count} {t("reviews")}</p> : <p>{t("noReviews")}</p>}
