@@ -33,8 +33,9 @@ export default function CustomerAccount() {
 
   const loadAccount = useCallback(async () => {
     if (!supabase) return;
-    const { data: { user: signedInUser }, error: authError } = await supabase.auth.getUser();
+    const { data: { session }, error: authError } = await supabase.auth.getSession();
     if (authError) throw authError;
+    const signedInUser = session?.user || null;
     setUser(signedInUser || null);
     if (!signedInUser) { setBookings([]); return; }
     const [customerProfile, rows] = await Promise.all([getCustomerProfile(signedInUser.id), getCustomerBookings()]);

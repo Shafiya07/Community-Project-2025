@@ -34,8 +34,9 @@ export default function WorkerAccount() {
     if (!supabase) return;
     setError("");
     try {
-      const { data: { user: signedInUser }, error: authError } = await supabase.auth.getUser();
+      const { data: { session }, error: authError } = await supabase.auth.getSession();
       if (authError) throw authError;
+      const signedInUser = session?.user || null;
       setUser(signedInUser || null);
       if (!signedInUser) { setWorker(null); return; }
       const { data, error: workerError } = await supabase.from("workers")
