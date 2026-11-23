@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../../Components/shilajit/Navbar";
 import { getSupabase } from "../../api/supabase";
 import { getBookingReviews, getCustomerBookings, getCustomerProfile, saveCustomerProfile, submitBookingReview } from "../../api/bookings";
@@ -18,6 +18,7 @@ export default function CustomerAccount() {
   const supabaseConfigured = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
   const supabase = useMemo(() => (supabaseConfigured ? getSupabase() : null), [supabaseConfigured]);
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirect");
   const [user, setUser] = useState(null);
@@ -55,6 +56,12 @@ export default function CustomerAccount() {
     });
     return () => subscription.unsubscribe();
   }, [loadAccount, supabase]);
+
+  useEffect(() => {
+    if (location.hash !== "#work-requests" || !user) return;
+    const timer = window.setTimeout(() => document.getElementById("work-requests")?.scrollIntoView({ behavior: "smooth" }), 250);
+    return () => window.clearTimeout(timer);
+  }, [location.hash, user]);
 
   async function authenticate(event) {
     event.preventDefault(); setBusy(true); setError(""); setMessage("");
