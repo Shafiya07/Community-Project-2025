@@ -12,6 +12,7 @@ export default function Navbar() {
     { to: "/#categories", label: t("categories") },
     { to: "/register", label: t("registerWorker") },
     { to: "/my-profile", label: "My profile" },
+    { to: "/my-account", label: "My bookings" },
     { to: "/about", label: t("about") },
   ];
 

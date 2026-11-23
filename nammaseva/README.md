@@ -53,6 +53,12 @@ Open `https://YOUR-HOSTNAME/admin` and sign in with the owner Supabase Auth acco
 
 After a successful submission, the profile is stored in the Supabase `public.workers` table with `status = 'approved'` and appears in public search immediately. An optional photo is saved in the private `worker-photos` Storage bucket. The form shows a success message only after the server confirms the save.
 
+### 5. Customer bookings and feedback
+
+Apply `supabase/migrations/20261123000000_customer_bookings_and_feedback.sql` after the worker account and profile-publication migrations. Customers create or sign in at `/my-account`, save their name and phone number, and can book a published worker from that worker's profile. Booking requests are stored in `public.bookings`; customers see every request and its status in their dashboard, and the worker sees incoming requests in `/my-profile`. Workers move a booking through accepted, in progress, and completed (or cancel it). Once completed, the customer can submit one review for that booking. The review is published immediately on the worker profile and displayed with a rating and the customer's chosen profile name.
+
+The database enforces booking ownership, worker ownership of status updates, allowed status transitions, one feedback entry per booking, and completion before feedback. Customer contact details are shown to the assigned worker only inside their booking request; they are not added to public worker feedback.
+
 When there are no approved listings, the public directory shows a small set of static demo profiles so the profile flow can be previewed. Each demo is visibly labeled, uses fictional details, has no contact information, and is never represented as a real or verified worker. A Supabase configuration error also shows these demos with the same warning; other request failures remain visible as errors.
 
 ### Environment files and local checks
@@ -75,7 +81,7 @@ npm run build
 - The database rate limiter stores a keyed hash of the source IP, not the raw IP.
 - Phone numbers are public only when the worker explicitly consents to publish them.
 - The directory map loads an OpenStreetMap embed and shows Tumakuru city center only; worker profiles do not collect precise coordinates, so it does not display individual worker locations.
-- Use the privacy and terms pages to explain the actual operator, retention period, and contact process before launch. The prototype does not yet include a retention/deletion workflow, worker self-service account, review submission, payments, or booking management.
+- Use the privacy and terms pages to explain the actual operator, retention period, and contact process before launch. The app does not include payments, booking notifications, or an account deletion workflow yet.
 
 The old `db.json` file is legacy sample data and is not part of the Vercel/Supabase architecture. Do not copy its development data into production.
 

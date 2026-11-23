@@ -4,6 +4,7 @@ import Navbar from "../../Components/shilajit/Navbar";
 import { averageRating, getReviews, getWorker, isValidIndianMobile, normalizeMobile } from "../../api/workers";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { getDemoWorker } from "../../data/demoWorkers";
+import { getWorkerCompletedBookingCount } from "../../api/bookings";
 import "./Directory.css";
 
 function displayList(value) {
@@ -16,6 +17,7 @@ export default function WorkerProfile() {
   const [worker, setWorker] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [notFound, setNotFound] = useState(false);
+  const [completedBookings, setCompletedBookings] = useState(0);
 
   useEffect(() => {
     let mounted = true;
@@ -23,13 +25,14 @@ export default function WorkerProfile() {
     setWorker(null);
     setReviews([]);
     setNotFound(false);
+    setCompletedBookings(0);
     if (demoWorker) {
       setWorker(demoWorker);
       return () => { mounted = false; };
     }
 
-    Promise.all([getWorker(id), getReviews()])
-      .then(([record, allReviews]) => {
+    Promise.all([getWorker(id), getReviews(), getWorkerCompletedBookingCount(id).catch(() => 0)])
+      .then(([record, allReviews, completedCount]) => {
         if (!mounted) return;
         if (record.status !== "approved") {
           setNotFound(true);
@@ -37,6 +40,7 @@ export default function WorkerProfile() {
         }
         setWorker(record);
         setReviews(allReviews);
+        setCompletedBookings(completedCount);
       })
       .catch(() => {
         if (mounted) setNotFound(true);
@@ -84,6 +88,7 @@ export default function WorkerProfile() {
               )}
               <div className="profile-details">
                 <section><h2>{t("experienceLabel")}</h2><p>{worker.experience} {Number(worker.experience) === 1 ? t("year") : t("years")}</p></section>
+                <section><h2>Completed jobs</h2><p>{worker.isDemo ? "Sample profile" : completedBookings}</p></section>
                 {displayList(worker.skills) && <section><h2>{t("skills")}</h2><p>{displayList(worker.skills)}</p></section>}
                 {displayList(worker.serviceAreas) && <section><h2>{t("serviceAreas")}</h2><p>{displayList(worker.serviceAreas)}</p></section>}
                 {displayList(worker.languages) && <section><h2>{t("languages")}</h2><p>{displayList(worker.languages)}</p></section>}
@@ -95,6 +100,7 @@ export default function WorkerProfile() {
                   {rating ? <p className="worker-rating">★ {rating.average} · {rating.count} {t("reviews")}</p> : <p>{t("noReviews")}</p>}
                   {workerReviews.map((review) => (
                     <article className="review-item" key={review.id}>
+                      <strong>{review.customerName || "Customer"}</strong>
                       <p className="worker-rating">★ {Number(review.rating)}</p>
                       {review.text && <p>{review.text}</p>}
                       {review.createdAt && <time dateTime={review.createdAt}>{new Date(review.createdAt).toLocaleDateString(language === "kn" ? "kn-IN" : "en-IN")}</time>}
@@ -107,6 +113,7 @@ export default function WorkerProfile() {
                 <section className="profile-contact">
                   <h2>{t("contactWorker")}</h2>
                   <div className="contact-actions">
+                    {!worker.isDemo && <Link className="button button-primary" to={`/book/${worker.id}`}>Book this worker</Link>}
                     <a className="button button-primary" href={`tel:+91${publicPhone}`}>{t("callWorker")}</a>
                     <a className="button button-secondary" href={whatsappUrl} target="_blank" rel="noreferrer">{t("whatsapp")}</a>
                   </div>

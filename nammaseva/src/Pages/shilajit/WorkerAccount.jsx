@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../../Components/shilajit/Navbar";
 import { getSupabase } from "../../api/supabase";
+import WorkerBookings from "./WorkerBookings";
 import "./WorkerAccount.css";
 
 const editableFields = [
@@ -63,7 +64,7 @@ export default function WorkerAccount() {
       if (mode === "signup") {
         const { data, error: authError } = await supabase.auth.signUp({ email: email.trim(), password });
         if (authError) throw authError;
-        if (!data.session) setMessage("Account created. Check your email to confirm it, then sign in here.");
+        if (!data.session) setMessage("Account created. Sign in to continue to your worker profile.");
         else { setMessage("Account created. You can now register your worker profile."); await loadProfile(); }
       } else {
         const { error: authError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
@@ -154,6 +155,7 @@ export default function WorkerAccount() {
             <div className="account-span account-actions"><button className="button button-primary" disabled={busy}>{busy ? "Saving…" : "Save changes"}</button><button type="button" className="account-delete" disabled={busy} onClick={deleteProfile}>Delete my profile</button></div>
           </form>
           <section className="account-feedback"><h2>Customer feedback</h2>{reviews.length ? reviews.map((review) => <article key={review.id}><strong>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)} <time>{new Date(review.created_at).toLocaleDateString()}</time></strong><p>{review.text || "Rating only"}</p></article>) : <p>No approved feedback yet. Customer reviews will appear here.</p>}</section>
+          <WorkerBookings workerId={worker.id} />
         </>}
     </section>}
   </main></>;

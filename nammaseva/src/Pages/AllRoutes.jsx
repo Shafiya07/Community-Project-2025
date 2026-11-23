@@ -10,6 +10,8 @@ const About = React.lazy(() => import("./shilajit/About"));
 const InfoPage = React.lazy(() => import("./shilajit/InfoPage"));
 const Admin = React.lazy(() => import("./shilajit/Admin"));
 const WorkerAccount = React.lazy(() => import("./shilajit/WorkerAccount"));
+const CustomerAccount = React.lazy(() => import("./shilajit/CustomerAccount"));
+const BookingRequest = React.lazy(() => import("./shilajit/BookingRequest"));
 
 const AllRoutes = () => {
   return (
@@ -21,6 +23,8 @@ const AllRoutes = () => {
           <Route path="/workers/:id" element={<WorkerProfile />} />
           <Route path="/register" element={<WorkerRegistration />} />
           <Route path="/my-profile" element={<WorkerAccount />} />
+          <Route path="/my-account" element={<CustomerAccount />} />
+          <Route path="/book/:workerId" element={<BookingRequest />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<InfoPage page="contact" />} />

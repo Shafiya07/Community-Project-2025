@@ -65,7 +65,7 @@ export async function getWorker(id) {
 export async function getReviews() {
   const { data, error } = await getSupabase()
     .from("reviews")
-    .select("id,worker_id,rating,text,created_at,status")
+    .select("id,worker_id,rating,text,customer_name,created_at,status")
     .eq("status", "approved");
   throwOnError(error);
   return (data || []).map((review) => ({
@@ -73,6 +73,7 @@ export async function getReviews() {
     workerId: review.worker_id,
     rating: review.rating,
     text: review.text,
+    customerName: review.customer_name,
     createdAt: review.created_at,
     status: review.status,
   }));
